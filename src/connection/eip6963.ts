@@ -7,6 +7,7 @@ import {
   ProviderConnectInfo,
   ProviderRpcError,
 } from '@web3-react/types'
+import { useSyncExternalStore } from 'react'
 import { shallowEqual } from 'react-redux'
 
 export function isDataURI(uri: string): boolean {
@@ -81,43 +82,35 @@ export interface EIP6963ConstructorArgs {
 }
 
 export class EIP6963 extends Connector {
-  public static _providerMap: Map<string, EIP6963ProviderDetail> = new Map()
-  public static providerMapListeners = new Set<() => void>()
+  private static _providerMap: Map<string, EIP6963ProviderDetail> = new Map()
+  private static providerMapListeners = new Set<() => void>()
   public static injectorsPresent = false
 
   private static onAnnounceProvider(event: EIP6963AnnounceProviderEvent) {
     const { rdns, icon, name, uuid } = event.detail?.info ?? {}
 
     // ignore improperly formatted eip6963 providers
-    if (!rdns || !icon || !name || !uuid) return
+    if (!rdns || !icon || !name || !uuid || rdns === 'com.coinbase.wallet') return
 
     this.injectorsPresent = true
     // ignored duplicate announcements
     if (shallowEqual(this._providerMap.get(rdns)?.info, event.detail.info)) return
 
     this._providerMap.set(rdns, event.detail)
-
-    setTimeout(() => {
-      this.providerMapListeners.forEach((listener) => listener())
-      console.log('cartcrom', 'updating listeners')
-    }, 100)
+    this.providerMapListeners.forEach((listener) => listener())
   }
 
-  // public static subscribeToProviderUpdates(listener: () => void) {
-  //   console.log('cartcrom', 'subscribing', JSON.stringify(this._providerMap))
-  //   this.providerMapListeners.add(listener)
-  //   return () => {
-  //     console.log('cartcrom', 'unsubscribing')
-  //     this.providerMapListeners.delete(listener)
-  //   }
-  // }
-  // public static useInjectedOptions(): ReadonlyMap<string, EIP6963ProviderDetail> {
-  //   // eslint incorrectly thinks this hook is inside of a react class component
-  //   // eslint-disable-next-line react-hooks/rules-of-hooks
-  //   const test = useSyncExternalStore(this.subscribeToProviderUpdates.bind(this), () => this._providerMap)
-  //   this.providerMapListeners.forEach((listener) => listener())
-  //   return test
-  // }
+  public static subscribeToProviderUpdates(listener: () => void) {
+    this.providerMapListeners.add(listener)
+    return () => {
+      this.providerMapListeners.delete(listener)
+    }
+  }
+  public static useInjectedOptions(): ReadonlyMap<string, EIP6963ProviderDetail> {
+    // eslint incorrectly thinks this hook is inside of a react class component
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useSyncExternalStore(this.subscribeToProviderUpdates.bind(EIP6963), () => this._providerMap)
+  }
 
   public static get providerMap(): ReadonlyMap<string, EIP6963ProviderDetail> {
     return this._providerMap
@@ -228,30 +221,3 @@ export class EIP6963 extends Connector {
     }
   }
 }
-
-class EIP6963ProviderMap {
-  map: Map<string, EIP6963ProviderDetail> = new Map()
-  listeners = new Set<() => void>()
-  injectorsPresent = false
-
-  constructor() {
-    window.addEventListener('eip6963:announceProvider', this.onAnnounceProvider.bind(this) as EventListener)
-    window.dispatchEvent(new Event('eip6963:requestProvider'))
-  }
-
-  private onAnnounceProvider(event: EIP6963AnnounceProviderEvent) {
-    const { rdns, icon, name, uuid } = event.detail?.info ?? {}
-
-    // ignore improperly formatted eip6963 providers
-    if (!rdns || !icon || !name || !uuid) return
-
-    this.injectorsPresent = true
-    // ignored duplicate announcements
-    if (shallowEqual(this.map.get(rdns)?.info, event.detail.info)) return
-
-    this.map.set(rdns, { ...event.detail })
-    this.listeners.forEach((listener) => listener())
-  }
-}
-
-export const EIP6963_PROVIDER_MAP = new EIP6963ProviderMap()

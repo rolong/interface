@@ -1,14 +1,16 @@
+import { Trans } from '@lingui/macro'
 import { BrowserEvent, InterfaceElementName, InterfaceEventName } from '@uniswap/analytics-events'
 import { useWeb3React } from '@web3-react/core'
 import { TraceEvent } from 'analytics'
 import METAMASK_ICON from 'assets/wallets/metamask-icon.svg'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import Loader from 'components/Icons/LoadingSpinner'
-import { eip6963Connection } from 'connection'
+import { eip6963Connection, injectedConnection } from 'connection'
 import { ActivationStatus, useActivationState } from 'connection/activate'
 import { EIP6963ProviderInfo } from 'connection/eip6963'
 import { Connection } from 'connection/types'
 import styled from 'styled-components'
+import { ButtonText, ThemedText } from 'theme/components'
 import { useIsDarkMode } from 'theme/components/ThemeToggle'
 import { flexColumnNoWrap, flexRowNoWrap } from 'theme/styles'
 
@@ -135,5 +137,19 @@ export default function Option({ connection, eip6963Info }: OptionProps) {
         </OptionCardClickable>
       </TraceEvent>
     </Wrapper>
+  )
+}
+
+export function DeprecatedInjectorMessage() {
+  const { tryActivation } = useActivationState()
+  const toggleAccountDrawer = useToggleAccountDrawer()
+  const { chainId } = useWeb3React()
+
+  return (
+    <ButtonText onClick={() => tryActivation(injectedConnection, toggleAccountDrawer, chainId)}>
+      <ThemedText.BodySmall color="neutral2">
+        <Trans>Don't see your wallet?</Trans>
+      </ThemedText.BodySmall>
+    </ButtonText>
   )
 }
