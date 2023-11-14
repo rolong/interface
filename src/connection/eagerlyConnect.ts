@@ -1,7 +1,7 @@
 import { Connector } from '@web3-react/types'
 import { useSyncExternalStore } from 'react'
 
-import { deprecatedNetworkConnection, getConnection, gnosisSafeConnection } from './index'
+import { deprecatedNetworkConnection, eip6963Connection, getConnection, gnosisSafeConnection } from './index'
 import { deletePersistedConnectionMeta, getPersistedConnectionMeta } from './meta'
 import { ConnectionType } from './types'
 
@@ -49,6 +49,7 @@ connect(deprecatedNetworkConnection.connector, ConnectionType.DEPRECATED_NETWORK
 const meta = getPersistedConnectionMeta()
 if (meta?.type) {
   const selectedConnection = getConnection(meta.type)
+  if (meta.latestEip6963rdns) eip6963Connection.selectProvider(meta.latestEip6963rdns)
   if (selectedConnection) {
     connectionReady = connect(selectedConnection.connector, meta.type)
       .then((connected) => {

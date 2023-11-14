@@ -1,9 +1,12 @@
 import { BrowserEvent, InterfaceElementName, InterfaceEventName } from '@uniswap/analytics-events'
 import { useWeb3React } from '@web3-react/core'
 import { TraceEvent } from 'analytics'
+import METAMASK_ICON from 'assets/wallets/metamask-icon.svg'
 import { useToggleAccountDrawer } from 'components/AccountDrawer'
 import Loader from 'components/Icons/LoadingSpinner'
+import { eip6963Connection } from 'connection'
 import { ActivationStatus, useActivationState } from 'connection/activate'
+import { EIP6963ProviderInfo } from 'connection/eip6963'
 import { Connection } from 'connection/types'
 import styled from 'styled-components'
 import { useIsDarkMode } from 'theme/components/ThemeToggle'
@@ -75,25 +78,45 @@ const Wrapper = styled.div<{ disabled: boolean }>`
   }
 `
 
+const ICON_OVERRIDE_MAP: { [rdns in string]?: string } = {
+  'io.metamask': METAMASK_ICON, // MetaMask's provided icon has no padding
+}
+
+function getOverrideIcon(info?: EIP6963ProviderInfo) {
+  if (!info) return undefined
+  return ICON_OVERRIDE_MAP[info.rdns] ?? info.icon
+}
+
 interface OptionProps {
   connection: Connection
+  eip6963Info?: EIP6963ProviderInfo
 }
-export default function Option({ connection }: OptionProps) {
+export default function Option({ connection, eip6963Info }: OptionProps) {
   const { activationState, tryActivation } = useActivationState()
   const toggleAccountDrawer = useToggleAccountDrawer()
   const { chainId } = useWeb3React()
-  const activate = () => tryActivation(connection, toggleAccountDrawer, chainId)
+
+  const isDarkMode = useIsDarkMode()
+  const { name, icon } = eip6963Info ?? connection.getProviderInfo(isDarkMode)
+
+  const activate = () => {
+    // select which injected provider to use when applicable
+    if (eip6963Info) eip6963Connection.selectProvider(eip6963Info.rdns)
+    tryActivation(connection, toggleAccountDrawer, chainId)
+  }
 
   const isSomeOptionPending = activationState.status === ActivationStatus.PENDING
-  const isCurrentOptionPending = isSomeOptionPending && activationState.connection.type === connection.type
-  const isDarkMode = useIsDarkMode()
+  const isCurrentOptionPending =
+    isSomeOptionPending &&
+    activationState.connection.type === connection.type &&
+    (!eip6963Info || eip6963Connection.getProviderInfo().rdns === eip6963Info.rdns)
 
   return (
     <Wrapper disabled={isSomeOptionPending}>
       <TraceEvent
         events={[BrowserEvent.onClick]}
         name={InterfaceEventName.WALLET_SELECTED}
-        properties={{ wallet_type: connection.getName() }}
+        properties={{ wallet_type: name }}
         element={InterfaceElementName.WALLET_TYPE_OPTION}
       >
         <OptionCardClickable
@@ -104,9 +127,9 @@ export default function Option({ connection }: OptionProps) {
         >
           <OptionCardLeft>
             <IconWrapper>
-              <img src={connection.getIcon?.(isDarkMode)} alt={connection.getName()} />
+              <img src={getOverrideIcon(eip6963Info) ?? icon} alt={name} />
             </IconWrapper>
-            <HeaderText>{connection.getName()}</HeaderText>
+            <HeaderText>{name}</HeaderText>
           </OptionCardLeft>
           {isCurrentOptionPending && <Loader />}
         </OptionCardClickable>

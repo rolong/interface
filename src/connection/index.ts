@@ -15,19 +15,30 @@ import { isMobile, isNonIOSPhone } from 'utils/userAgent'
 
 import { RPC_URLS } from '../constants/networks'
 import { DEPRECATED_RPC_PROVIDERS, RPC_PROVIDERS } from '../constants/providers'
+import { EIP6963 } from './eip6963'
 import { Connection, ConnectionType } from './types'
-import { getInjection, getIsCoinbaseWallet, getIsInjected, getIsMetaMaskWallet } from './utils'
+import { getDeprecatedInjection, getIsCoinbaseWallet, getIsInjected, getIsMetaMaskWallet } from './utils'
 import { UniwalletConnect as UniwalletWCV2Connect, WalletConnectV2 } from './WalletConnectV2'
 
 function onError(error: Error) {
   console.debug(`web3-react error: ${error}`)
 }
 
+const [eip6963, eip6963hooks] = initializeConnector<EIP6963>((actions) => new EIP6963({ actions, onError }))
+export const eip6963Connection: Connection & { selectProvider: (rdns: string) => void } = {
+  selectProvider: (rdns: string) => eip6963.selectProvider(rdns), // used to switch the currently selected eip6963 wallet
+  getProviderInfo: () => eip6963.provider.currentProvider?.info ?? { name: 'Browser Wallet' },
+  connector: eip6963,
+  hooks: eip6963hooks,
+  type: ConnectionType.EIP_6963_INJECTED,
+  shouldDisplay: () => false, // Since we display each individual eip6963 wallet, we shouldn't display this generic parent connection
+} as const
+
 const [web3Network, web3NetworkHooks] = initializeConnector<Network>(
   (actions) => new Network({ actions, urlMap: RPC_PROVIDERS, defaultChainId: 1 })
 )
 export const networkConnection: Connection = {
-  getName: () => 'Network',
+  getProviderInfo: () => ({ name: 'Network' }),
   connector: web3Network,
   hooks: web3NetworkHooks,
   type: ConnectionType.NETWORK,
@@ -35,10 +46,15 @@ export const networkConnection: Connection = {
 }
 
 const [deprecatedWeb3Network, deprecatedWeb3NetworkHooks] = initializeConnector<Network>(
-  (actions) => new Network({ actions, urlMap: DEPRECATED_RPC_PROVIDERS, defaultChainId: 1 })
+  (actions) =>
+    new Network({
+      actions,
+      urlMap: DEPRECATED_RPC_PROVIDERS,
+      defaultChainId: 1,
+    })
 )
 export const deprecatedNetworkConnection: Connection = {
-  getName: () => 'Network',
+  getProviderInfo: () => ({ name: 'Network' }),
   connector: deprecatedWeb3Network,
   hooks: deprecatedWeb3NetworkHooks,
   type: ConnectionType.NETWORK,
@@ -56,12 +72,13 @@ const getIsGenericInjector = () => getIsInjected() && !getIsMetaMaskWallet() && 
 const [web3Injected, web3InjectedHooks] = initializeConnector<MetaMask>((actions) => new MetaMask({ actions, onError }))
 
 export const injectedConnection: Connection = {
-  getName: () => getInjection().name,
+  getProviderInfo: (isDarkMode: boolean) => getDeprecatedInjection(isDarkMode) ?? { name: 'Browser Wallet' },
   connector: web3Injected,
   hooks: web3InjectedHooks,
   type: ConnectionType.INJECTED,
-  getIcon: (isDarkMode: boolean) => getInjection(isDarkMode).icon,
-  shouldDisplay: () => getIsMetaMaskWallet() || getShouldAdvertiseMetaMask() || getIsGenericInjector(),
+  shouldDisplay: (eip6963Enabled: boolean) =>
+    (getIsMetaMaskWallet() || getShouldAdvertiseMetaMask() || getIsGenericInjector()) &&
+    !!getDeprecatedInjection(undefined, eip6963Enabled),
   // If on non-injected, non-mobile browser, prompt user to install Metamask
   overrideActivate: () => {
     if (getShouldAdvertiseMetaMask()) {
@@ -73,11 +90,10 @@ export const injectedConnection: Connection = {
 }
 const [web3GnosisSafe, web3GnosisSafeHooks] = initializeConnector<GnosisSafe>((actions) => new GnosisSafe({ actions }))
 export const gnosisSafeConnection: Connection = {
-  getName: () => 'Gnosis Safe',
+  getProviderInfo: () => ({ name: 'Gnosis Safe', icon: GNOSIS_ICON }),
   connector: web3GnosisSafe,
   hooks: web3GnosisSafeHooks,
   type: ConnectionType.GNOSIS_SAFE,
-  getIcon: () => GNOSIS_ICON,
   shouldDisplay: () => false,
 }
 
@@ -88,6 +104,10 @@ export const walletConnectV2Connection: Connection = new (class implements Conne
   type = ConnectionType.WALLET_CONNECT_V2
   getName = () => 'WalletConnect'
   getIcon = () => WALLET_CONNECT_ICON
+  getProviderInfo = () => ({
+    name: 'WalletConnect',
+    icon: WALLET_CONNECT_ICON,
+  })
   shouldDisplay = () => !getIsInjectedMobileBrowser()
 
   private activeConnector = initializeConnector<WalletConnectV2>(this.initializer)
@@ -144,11 +164,10 @@ const [web3WCV2UniwalletConnect, web3WCV2UniwalletConnectHooks] = initializeConn
   (actions) => new UniwalletWCV2Connect({ actions, onError })
 )
 export const uniwalletWCV2ConnectConnection: Connection = {
-  getName: () => 'Uniswap Wallet',
+  getProviderInfo: () => ({ name: 'Uniswap Wallet', icon: UNIWALLET_ICON }),
   connector: web3WCV2UniwalletConnect,
   hooks: web3WCV2UniwalletConnectHooks,
   type: ConnectionType.UNISWAP_WALLET_V2,
-  getIcon: () => UNIWALLET_ICON,
   shouldDisplay: () => Boolean(!getIsInjectedMobileBrowser() && !isNonIOSPhone),
 }
 
@@ -166,11 +185,10 @@ const [web3CoinbaseWallet, web3CoinbaseWalletHooks] = initializeConnector<Coinba
     })
 )
 const coinbaseWalletConnection: Connection = {
-  getName: () => 'Coinbase Wallet',
+  getProviderInfo: () => ({ name: 'Coinbase Wallet', icon: COINBASE_ICON }),
   connector: web3CoinbaseWallet,
   hooks: web3CoinbaseWalletHooks,
   type: ConnectionType.COINBASE_WALLET,
-  getIcon: () => COINBASE_ICON,
   shouldDisplay: () =>
     Boolean((isMobile && !getIsInjectedMobileBrowser()) || !isMobile || getIsCoinbaseWalletBrowser()),
   // If on a mobile browser that isn't the coinbase wallet browser, deeplink to the coinbase wallet app
@@ -189,6 +207,8 @@ export const connections = [
   injectedConnection,
   walletConnectV2Connection,
   coinbaseWalletConnection,
+  eip6963Connection,
+  // network connector should be last in the list, as it should be the fallback if no other connector is active
   networkConnection,
   deprecatedNetworkConnection,
 ]
@@ -216,6 +236,8 @@ export function getConnection(c: Connector | ConnectionType) {
         return deprecatedNetworkConnection
       case ConnectionType.GNOSIS_SAFE:
         return gnosisSafeConnection
+      case ConnectionType.EIP_6963_INJECTED:
+        return eip6963Connection
     }
   }
 }
