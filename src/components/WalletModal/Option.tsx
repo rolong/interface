@@ -148,7 +148,7 @@ export function DeprecatedInjectorMessage() {
   return (
     <ButtonText onClick={() => tryActivation(injectedConnection, toggleAccountDrawer, chainId)}>
       <ThemedText.BodySmall color="neutral2">
-        <Trans>Don't see your wallet?</Trans>
+        <Trans>Don&apos;t see your wallet?</Trans>
       </ThemedText.BodySmall>
     </ButtonText>
   )
