@@ -64,6 +64,7 @@ export const GQL_MAINNET_CHAINS = [
   Chain.Optimism,
   Chain.Arbitrum,
   Chain.Bnb,
+  Chain.UCHAIN,
   Chain.Avalanche,
   Chain.Base,
 ] as const
@@ -86,6 +87,7 @@ export const CHAIN_ID_TO_BACKEND_NAME: { [key: number]: InterfaceGqlChain } = {
   [ChainId.OPTIMISM]: Chain.Optimism,
   [ChainId.OPTIMISM_GOERLI]: Chain.Optimism,
   [ChainId.BNB]: Chain.Bnb,
+  [ChainId.UCHAIN]: Chain.UCHAIN,
   [ChainId.AVALANCHE]: Chain.Avalanche,
   [ChainId.BASE]: Chain.Base,
 }
@@ -153,6 +155,7 @@ export function validateUrlChainParam(chainName: string | undefined) {
   return isValidBackEndChain ? URL_CHAIN_PARAM_TO_BACKEND[chainName] : Chain.Ethereum
 }
 
+console.log('ChainId', ChainId)
 const CHAIN_NAME_TO_CHAIN_ID: { [key in InterfaceGqlChain]: ChainId } = {
   [Chain.Ethereum]: ChainId.MAINNET,
   [Chain.EthereumGoerli]: ChainId.GOERLI,
@@ -162,6 +165,7 @@ const CHAIN_NAME_TO_CHAIN_ID: { [key in InterfaceGqlChain]: ChainId } = {
   [Chain.Optimism]: ChainId.OPTIMISM,
   [Chain.Arbitrum]: ChainId.ARBITRUM_ONE,
   [Chain.Bnb]: ChainId.BNB,
+  [Chain.UCHAIN]: ChainId.UCHAIN,
   [Chain.Avalanche]: ChainId.AVALANCHE,
   [Chain.Base]: ChainId.BASE,
 }

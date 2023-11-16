@@ -13,6 +13,7 @@ export const CHAIN_IDS_TO_NAMES = {
   [ChainId.OPTIMISM]: 'optimism',
   [ChainId.OPTIMISM_GOERLI]: 'optimism_goerli',
   [ChainId.BNB]: 'bnb',
+  [ChainId.UCHAIN]: 'uChain',
   [ChainId.AVALANCHE]: 'avalanche',
   [ChainId.BASE]: 'base',
 } as const
@@ -51,6 +52,7 @@ export const SUPPORTED_GAS_ESTIMATE_CHAIN_IDS = [
   ChainId.OPTIMISM,
   ChainId.ARBITRUM_ONE,
   ChainId.BNB,
+  ChainId.UCHAIN,
   ChainId.AVALANCHE,
   ChainId.BASE,
 ] as const
@@ -81,6 +83,7 @@ export const L1_CHAIN_IDS = [
   ChainId.CELO,
   ChainId.CELO_ALFAJORES,
   ChainId.BNB,
+  ChainId.UCHAIN,
   ChainId.AVALANCHE,
 ] as const
 
@@ -123,6 +126,7 @@ export function getChainPriority(chainId: ChainId): number {
     case ChainId.BASE:
       return 4
     case ChainId.BNB:
+    case ChainId.UCHAIN:
       return 5
     case ChainId.AVALANCHE:
       return 6

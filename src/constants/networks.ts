@@ -13,6 +13,11 @@ if (typeof QUICKNODE_BNB_RPC_URL === 'undefined') {
   throw new Error(`REACT_APP_BNB_RPC_URL must be a defined environment variable`)
 }
 
+const QUICKNODE_UCHAIN_RPC_URL = process.env.REACT_APP_UCHAIN_RPC_URL
+if (typeof QUICKNODE_UCHAIN_RPC_URL === 'undefined') {
+  throw new Error(`REACT_APP_UCHAIN_RPC_URL must be a defined environment variable`)
+}
+
 /**
  * Fallback JSON-RPC endpoints.
  * These are used if the integrator does not provide an endpoint, or if the endpoint does not work.
@@ -104,6 +109,10 @@ export const FALLBACK_URLS = {
     'https://bsc-dataseed4.defibit.io',
     'https://rpc.ankr.com/bsc',
   ],
+  [ChainId.UCHAIN]: [
+    // "Safe" URLs
+    'https://rpc.uchain.ai',
+  ],
   [ChainId.AVALANCHE]: [
     // "Safe" URLs
     'https://api.avax.network/ext/bc/C/rpc',
@@ -154,6 +163,7 @@ export const RPC_URLS = {
   [ChainId.CELO]: FALLBACK_URLS[ChainId.CELO],
   [ChainId.CELO_ALFAJORES]: FALLBACK_URLS[ChainId.CELO_ALFAJORES],
   [ChainId.BNB]: [QUICKNODE_BNB_RPC_URL, ...FALLBACK_URLS[ChainId.BNB]],
+  [ChainId.UCHAIN]: [QUICKNODE_UCHAIN_RPC_URL, ...FALLBACK_URLS[ChainId.UCHAIN]],
   [ChainId.AVALANCHE]: [`https://avalanche-mainnet.infura.io/v3/${INFURA_KEY}`, ...FALLBACK_URLS[ChainId.AVALANCHE]],
   [ChainId.BASE]: [`https://base-mainnet.infura.io/v3/${INFURA_KEY}`, ...FALLBACK_URLS[ChainId.BASE]],
 }

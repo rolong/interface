@@ -15,6 +15,7 @@ export const START_BLOCKS: { [key: number]: number } = {
   [ChainId.OPTIMISM]: 10028767,
   [ChainId.CELO]: 13916355,
   [ChainId.BNB]: 26324014,
+  [ChainId.UCHAIN]: 377723,
   [ChainId.AVALANCHE]: 31422450,
   [ChainId.BASE]: 1371680,
 }
@@ -197,6 +198,19 @@ const CHAIN_INFO: ChainInfoMap = {
     defaultListUrl: PLASMA_BNB_LIST,
     color: darkTheme.chain_56,
     backgroundColor: darkTheme.chain_56_background,
+  },
+  [ChainId.UCHAIN]: {
+    networkType: NetworkType.L1,
+    blockWaitMsBeforeWarning: ms(`10m`),
+    bridge: 'https://cbridge.celer.network/1/56',
+    docs: 'https://docs.bnbchain.org/',
+    explorer: 'https://e.uchain.ai/',
+    infoLink: 'https://info.uniswap.org/#/bnb/',
+    label: 'uChain',
+    nativeCurrency: { name: 'TBT', symbol: 'TBT', decimals: 18 },
+    defaultListUrl: PLASMA_BNB_LIST,
+    color: darkTheme.chain_792,
+    backgroundColor: darkTheme.chain_792_background,
   },
   [ChainId.AVALANCHE]: {
     networkType: NetworkType.L1,

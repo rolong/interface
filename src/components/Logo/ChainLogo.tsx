@@ -9,6 +9,7 @@ import { ReactComponent as arbitrum } from './ChainSymbols/arbitrum.svg'
 import { ReactComponent as avax } from './ChainSymbols/avax.svg'
 import { ReactComponent as base } from './ChainSymbols/base.svg'
 import { ReactComponent as bnb } from './ChainSymbols/bnb.svg'
+import { ReactComponent as uchain } from './ChainSymbols/bnb.svg'
 import { ReactComponent as celo } from './ChainSymbols/celo.svg'
 import { ReactComponent as celoLight } from './ChainSymbols/celo_light.svg'
 import { ReactComponent as ethereum } from './ChainSymbols/ethereum.svg'
@@ -75,6 +76,14 @@ export function getChainUI(chainId: ChainId, darkMode: boolean): ChainUI | undef
         bgColor: '#EAB20033',
         textColor: '#EAB200',
       }
+
+    case ChainId.UCHAIN:
+      return {
+        Symbol: uchain,
+        bgColor: '#EAB20033',
+        textColor: '#EAB200',
+      }
+
     case ChainId.BASE:
       return {
         Symbol: base,

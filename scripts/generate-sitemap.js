@@ -13,7 +13,7 @@ const getTopTokensQuery = (chain) => `
     }
   }
 `
-const chains = ['ETHEREUM', 'ARBITRUM', 'OPTIMISM', 'POLYGON', 'BASE', 'BNB', 'CELO']
+const chains = ['ETHEREUM', 'ARBITRUM', 'OPTIMISM', 'POLYGON', 'BASE', 'BNB', 'UCHAIN', 'CELO']
 
 const nftTopCollectionsQuery = `
   query {

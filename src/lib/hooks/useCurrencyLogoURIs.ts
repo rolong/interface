@@ -10,7 +10,16 @@ import CeloLogo from '../../assets/svg/celo_logo.svg'
 import MaticLogo from '../../assets/svg/matic-token-icon.svg'
 import { isCelo, NATIVE_CHAIN_ID, nativeOnChain } from '../../constants/tokens'
 
-type Network = 'ethereum' | 'arbitrum' | 'optimism' | 'polygon' | 'smartchain' | 'celo' | 'avalanchec' | 'base'
+type Network =
+  | 'ethereum'
+  | 'arbitrum'
+  | 'optimism'
+  | 'polygon'
+  | 'smartchain'
+  | 'celo'
+  | 'avalanchec'
+  | 'base'
+  | 'uchain'
 
 export function chainIdToNetworkName(networkId: ChainId): Network {
   switch (networkId) {
@@ -24,6 +33,8 @@ export function chainIdToNetworkName(networkId: ChainId): Network {
       return 'polygon'
     case ChainId.BNB:
       return 'smartchain'
+    case ChainId.UCHAIN:
+      return 'uchain'
     case ChainId.CELO:
       return 'celo'
     case ChainId.AVALANCHE:
