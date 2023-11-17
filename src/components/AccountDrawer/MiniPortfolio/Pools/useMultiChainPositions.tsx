@@ -39,6 +39,7 @@ type FeeAmounts = [BigNumber, BigNumber]
 
 const MAX_UINT128 = BigNumber.from(2).pow(128).sub(1)
 
+console.log('===> ChainId', ChainId)
 const DEFAULT_CHAINS = [
   ChainId.MAINNET,
   ChainId.ARBITRUM_ONE,

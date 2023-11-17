@@ -13,7 +13,6 @@ const BLOCK_EXPLORER_PREFIXES: { [chainId: number]: string } = {
   [ChainId.CELO]: 'https://celoscan.io',
   [ChainId.CELO_ALFAJORES]: 'https://alfajores-blockscout.celo-testnet.org',
   [ChainId.BNB]: 'https://bscscan.com',
-  [ChainId.UCHAIN]: 'https://e.uchain.ai',
   [ChainId.AVALANCHE]: 'https://snowtrace.io',
   [ChainId.BASE]: 'https://basescan.org',
 }

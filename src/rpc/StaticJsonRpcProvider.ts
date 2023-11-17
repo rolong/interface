@@ -19,6 +19,7 @@ export default class AppStaticJsonRpcProvider extends StaticJsonRpcProvider {
   }
 
   constructor(chainId: SupportedInterfaceChain, url: string) {
+    console.log('chainId', chainId)
     // Including networkish allows ethers to skip the initial detectNetwork call.
     super(url, /* networkish= */ { chainId, name: CHAIN_IDS_TO_NAMES[chainId] })
 

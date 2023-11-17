@@ -1,14 +1,10 @@
 import { SkipToken, skipToken } from '@reduxjs/toolkit/query/react'
-import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
-import { useUniswapXDefaultEnabled } from 'featureFlags/flags/uniswapXDefault'
-import { useUniswapXEthOutputEnabled } from 'featureFlags/flags/uniswapXEthOutput'
-import { useUniswapXExactOutputEnabled } from 'featureFlags/flags/uniswapXExactOutput'
+import { Currency, CurrencyAmount, TradeType } from '@uniswap/sdk-core'
 import { useUniswapXSyntheticQuoteEnabled } from 'featureFlags/flags/uniswapXUseSyntheticQuote'
 import { useFeesEnabled } from 'featureFlags/flags/useFees'
 import { useMemo } from 'react'
 import { GetQuoteArgs, INTERNAL_ROUTER_PREFERENCE_PRICE, RouterPreference } from 'state/routing/types'
 import { currencyAddressForSwapQuote } from 'state/routing/utils'
-import { useUserDisabledUniswapX, useUserOptedOutOfUniswapX } from 'state/user/hooks'
 
 /**
  * Returns query arguments for the Routing API query or undefined if the
@@ -22,8 +18,6 @@ export function useRoutingAPIArguments({
   amount,
   tradeType,
   routerPreference,
-  inputTax,
-  outputTax,
 }: {
   account?: string
   tokenIn?: Currency
@@ -31,15 +25,8 @@ export function useRoutingAPIArguments({
   amount?: CurrencyAmount<Currency>
   tradeType: TradeType
   routerPreference: RouterPreference | typeof INTERNAL_ROUTER_PREFERENCE_PRICE
-  inputTax: Percent
-  outputTax: Percent
 }): GetQuoteArgs | SkipToken {
   const uniswapXForceSyntheticQuotes = useUniswapXSyntheticQuoteEnabled()
-  const userDisabledUniswapX = useUserDisabledUniswapX()
-  const userOptedOutOfUniswapX = useUserOptedOutOfUniswapX()
-  const uniswapXEthOutputEnabled = useUniswapXEthOutputEnabled()
-  const uniswapXExactOutputEnabled = useUniswapXExactOutputEnabled()
-  const isUniswapXDefaultEnabled = useUniswapXDefaultEnabled()
 
   const feesEnabled = useFeesEnabled()
   // Don't enable fee logic if this is a quote for pricing
@@ -64,31 +51,8 @@ export function useRoutingAPIArguments({
             tradeType,
             needsWrapIfUniswapX: tokenIn.isNative,
             uniswapXForceSyntheticQuotes,
-            userDisabledUniswapX,
-            userOptedOutOfUniswapX,
-            uniswapXEthOutputEnabled,
-            uniswapXExactOutputEnabled,
-            isUniswapXDefaultEnabled,
             sendPortionEnabled,
-            inputTax,
-            outputTax,
           },
-    [
-      account,
-      amount,
-      routerPreference,
-      tokenIn,
-      tokenOut,
-      tradeType,
-      uniswapXExactOutputEnabled,
-      uniswapXForceSyntheticQuotes,
-      userDisabledUniswapX,
-      userOptedOutOfUniswapX,
-      uniswapXEthOutputEnabled,
-      isUniswapXDefaultEnabled,
-      sendPortionEnabled,
-      inputTax,
-      outputTax,
-    ]
+    [account, amount, routerPreference, tokenIn, tokenOut, tradeType, uniswapXForceSyntheticQuotes, sendPortionEnabled]
   )
 }

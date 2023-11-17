@@ -209,8 +209,8 @@ const CHAIN_INFO: ChainInfoMap = {
     label: 'uChain',
     nativeCurrency: { name: 'TBT', symbol: 'TBT', decimals: 18 },
     defaultListUrl: PLASMA_BNB_LIST,
-    color: darkTheme.chain_792,
-    backgroundColor: darkTheme.chain_792_background,
+    color: darkTheme.chain_56,
+    backgroundColor: darkTheme.chain_56_background,
   },
   [ChainId.AVALANCHE]: {
     networkType: NetworkType.L1,

@@ -13,7 +13,7 @@ export const CHAIN_IDS_TO_NAMES = {
   [ChainId.OPTIMISM]: 'optimism',
   [ChainId.OPTIMISM_GOERLI]: 'optimism_goerli',
   [ChainId.BNB]: 'bnb',
-  [ChainId.UCHAIN]: 'uChain',
+  [ChainId.UCHAIN]: 'uchain',
   [ChainId.AVALANCHE]: 'avalanche',
   [ChainId.BASE]: 'base',
 } as const
@@ -125,8 +125,9 @@ export function getChainPriority(chainId: ChainId): number {
       return 3
     case ChainId.BASE:
       return 4
-    case ChainId.BNB:
     case ChainId.UCHAIN:
+      return 5
+    case ChainId.BNB:
       return 5
     case ChainId.AVALANCHE:
       return 6

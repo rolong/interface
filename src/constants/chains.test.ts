@@ -15,6 +15,7 @@ const chainPriorityTestCases: [ChainId, number][] = [
   [ChainId.POLYGON_MUMBAI, 3],
   [ChainId.BASE, 4],
   [ChainId.BNB, 5],
+  [ChainId.UCHAIN, 5],
   [ChainId.AVALANCHE, 6],
   [ChainId.CELO, 7],
   [ChainId.CELO_ALFAJORES, 7],
