@@ -219,13 +219,17 @@ export async function transformQuoteToTrade(
   data: URAQuoteResponse,
   quoteMethod: QuoteMethod
 ): Promise<TradeResult> {
-  const { tradeType, needsWrapIfUniswapX, routerPreference, account, amount } = args
+  const { tradeType, needsWrapIfUniswapX, routerPreference, account, amount, isUniswapXDefaultEnabled } = args
 
-  const showUniswapXTrade = data.routing === URAQuoteType.DUTCH_LIMIT && routerPreference === RouterPreference.X
-
+  const showUniswapXTrade =
+    data.routing === URAQuoteType.DUTCH_LIMIT &&
+    (routerPreference === RouterPreference.X || (isUniswapXDefaultEnabled && routerPreference === RouterPreference.API))
   const [currencyIn, currencyOut] = getTradeCurrencies(args, showUniswapXTrade)
 
   const { gasUseEstimateUSD, blockNumber, routes, gasUseEstimate, swapFee } = getClassicTradeDetails(args, data)
+
+  // If the top-level URA quote type is DUTCH_LIMIT, then UniswapX is better for the user
+  const isUniswapXBetter = data.routing === URAQuoteType.DUTCH_LIMIT
 
   // Some sus javascript float math but it's ok because its just an estimate for display purposes
   const usdCostPerGas = gasUseEstimateUSD && gasUseEstimate ? gasUseEstimateUSD / gasUseEstimate : undefined
@@ -263,14 +267,15 @@ export async function transformQuoteToTrade(
     gasUseEstimateUSD,
     approveInfo,
     blockNumber,
+    isUniswapXBetter,
     requestId: data.quote.requestId,
     quoteMethod,
     swapFee,
   })
 
-  // If the top-level URA quote type is DUTCH_LIMIT, then UniswapX is better for the user
-  const isUniswapXBetter = data.routing === URAQuoteType.DUTCH_LIMIT
-  if (isUniswapXBetter) {
+  // During the opt-in period, only return UniswapX quotes if the user has turned on the setting,
+  // even if it is the better quote.
+  if (isUniswapXBetter && (routerPreference === RouterPreference.X || isUniswapXDefaultEnabled)) {
     const orderInfo = toDutchOrderInfo(data.quote.orderInfo)
     const swapFee = getSwapFee(data.quote)
     const wrapInfo = await getWrapInfo(needsWrapIfUniswapX, account, currencyIn.chainId, amount, usdCostPerGas)
