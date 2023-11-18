@@ -114,7 +114,7 @@ const ClickableContent = styled.div<{ gap?: number }>`
   cursor: pointer;
 `
 const ClickableName = styled(ClickableContent)`
-  gap: 14px;
+  gap: 12px;
   max-width: 100%;
 `
 const StyledHeaderRow = styled(StyledTokenRow)`

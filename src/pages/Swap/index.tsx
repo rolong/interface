@@ -26,7 +26,7 @@ import PriceImpactModal from 'components/swap/PriceImpactModal'
 import PriceImpactWarning from 'components/swap/PriceImpactWarning'
 import { ArrowWrapper, PageWrapper, SwapWrapper } from 'components/swap/styled'
 import SwapDetailsDropdown from 'components/swap/SwapDetailsDropdown'
-import SwapHeader, { SwapTab } from 'components/swap/SwapHeader'
+import SwapHeader from 'components/swap/SwapHeader'
 import { SwitchLocaleLink } from 'components/SwitchLocaleLink'
 import TokenSafetyModal from 'components/TokenSafety/TokenSafetyModal'
 import { useConnectionReady } from 'connection/eagerlyConnect'
@@ -292,9 +292,9 @@ export function Swap({
     parsedAmount,
     currencies,
     inputError: swapInputError,
-    outputFeeFiatValue,
     inputTax,
     outputTax,
+    outputFeeFiatValue,
   } = swapInfo
 
   const [inputTokenHasTax, outputTokenHasTax] = useMemo(
@@ -323,7 +323,7 @@ export function Swap({
           }
         : {
             [Field.INPUT]: independentField === Field.INPUT ? parsedAmount : trade?.inputAmount,
-            [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.outputAmount,
+            [Field.OUTPUT]: independentField === Field.OUTPUT ? parsedAmount : trade?.postTaxOutputAmount,
           },
     [independentField, parsedAmount, showWrap, trade]
   )
@@ -354,7 +354,7 @@ export function Swap({
   )
 
   const fiatValueTradeInput = useUSDPrice(trade?.inputAmount)
-  const fiatValueTradeOutput = useUSDPrice(trade?.outputAmount)
+  const fiatValueTradeOutput = useUSDPrice(trade?.postTaxOutputAmount)
   const preTaxFiatValueTradeOutput = useUSDPrice(trade?.outputAmount)
   const [stablecoinPriceImpact, preTaxStablecoinPriceImpact] = useMemo(
     () =>
@@ -585,10 +585,17 @@ export function Swap({
     if (!trade || prevTrade === trade) return // no new swap quote to log
 
     sendAnalyticsEvent(SwapEventName.SWAP_QUOTE_RECEIVED, {
-      ...formatSwapQuoteReceivedEventProperties(trade, allowedSlippage, swapQuoteLatency, outputFeeFiatValue),
+      ...formatSwapQuoteReceivedEventProperties(
+        trade,
+        allowedSlippage,
+        swapQuoteLatency,
+        inputTax,
+        outputTax,
+        outputFeeFiatValue
+      ),
       ...trace,
     })
-  }, [prevTrade, trade, trace, allowedSlippage, swapQuoteLatency, outputFeeFiatValue])
+  }, [prevTrade, trade, trace, allowedSlippage, swapQuoteLatency, inputTax, outputTax, outputFeeFiatValue])
 
   const showDetailsDropdown = Boolean(
     !showWrap && userHasSpecifiedInputOutput && (trade || routeIsLoading || routeIsSyncing)
@@ -601,10 +608,8 @@ export function Swap({
   const isDark = useIsDarkMode()
   const isUniswapXDefaultEnabled = useUniswapXDefaultEnabled()
 
-  const [currentTab, setCurrentTab] = useState<SwapTab>(SwapTab.Swap)
-
   const swapElement = (
-    <>
+    <SwapWrapper isDark={isDark} className={className} id="swap-page">
       <TokenSafetyModal
         isOpen={importTokensNotInDefault.length > 0 && !dismissTokenWarning}
         tokenAddress={importTokensNotInDefault[0]?.address}
@@ -613,6 +618,7 @@ export function Swap({
         onCancel={handleDismissTokenWarning}
         showCancel={true}
       />
+      <SwapHeader trade={trade} autoSlippage={autoSlippage} chainId={chainId} />
       {trade && showConfirm && (
         <ConfirmSwapModal
           trade={trade}
@@ -833,23 +839,13 @@ export function Swap({
         </div>
       </AutoColumn>
       {!showOptInSmall && !isUniswapXDefaultEnabled && <UniswapXOptIn isSmall={false} swapInfo={swapInfo} />}
-    </>
+    </SwapWrapper>
   )
 
   return (
-    <SwapWrapper isDark={isDark} className={className} id="swap-page">
-      <SwapHeader
-        selectedTab={currentTab}
-        onClickTab={(tab) => {
-          setCurrentTab(tab)
-        }}
-        trade={trade}
-        autoSlippage={autoSlippage}
-        chainId={chainId}
-      />
-      {/* todo: build Limit UI */}
-      {currentTab === SwapTab.Swap ? swapElement : undefined}
+    <>
+      {swapElement}
       {showOptInSmall && !isUniswapXDefaultEnabled && <UniswapXOptIn isSmall swapInfo={swapInfo} />}
-    </SwapWrapper>
+    </>
   )
 }

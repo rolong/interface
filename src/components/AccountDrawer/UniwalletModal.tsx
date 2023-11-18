@@ -9,6 +9,7 @@ import { uniwalletWCV2ConnectConnection } from 'connection'
 import { ActivationStatus, useActivationState } from 'connection/activate'
 import { ConnectionType } from 'connection/types'
 import { UniwalletConnect as UniwalletConnectV2 } from 'connection/WalletConnectV2'
+import { useAndroidGALaunchFlagEnabled } from 'featureFlags/flags/androidGALaunch'
 import { QRCodeSVG } from 'qrcode.react'
 import { useEffect, useState } from 'react'
 import styled, { useTheme } from 'styled-components'
@@ -42,8 +43,9 @@ export default function UniwalletModal() {
   const { activationState, cancelActivation } = useActivationState()
   const [uri, setUri] = useState<string>()
 
+  const isAndroidGALaunched = useAndroidGALaunchFlagEnabled()
   // Displays the modal if not on iOS/Android, a Uniswap Wallet Connection is pending, & qrcode URI is available
-  const onLaunchedMobilePlatform = isIOS || isAndroid
+  const onLaunchedMobilePlatform = isIOS || (isAndroidGALaunched && isAndroid)
   const open =
     !onLaunchedMobilePlatform &&
     activationState.status === ActivationStatus.PENDING &&
@@ -103,6 +105,8 @@ const InfoSectionWrapper = styled(RowBetween)`
 `
 
 function InfoSection() {
+  const isAndroidGALaunched = useAndroidGALaunchFlagEnabled()
+
   return (
     <InfoSectionWrapper>
       <AutoColumn gap="4px">
@@ -110,7 +114,13 @@ function InfoSection() {
           <Trans>Don&apos;t have a Uniswap wallet?</Trans>
         </ThemedText.SubHeaderSmall>
         <ThemedText.BodySmall color="neutral2">
-          <Trans>Safely store and swap tokens with the Uniswap app. Available on iOS and Android.</Trans>
+          {isAndroidGALaunched ? (
+            <Trans>Safely store and swap tokens with the Uniswap app. Available on iOS and Android.</Trans>
+          ) : (
+            <Trans>
+              Download in the App Store to safely store your tokens and NFTs, swap tokens, and connect to crypto apps.
+            </Trans>
+          )}
         </ThemedText.BodySmall>
       </AutoColumn>
       <Column>

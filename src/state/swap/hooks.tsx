@@ -2,6 +2,7 @@ import { Trans } from '@lingui/macro'
 import { ChainId, Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
 import { useWeb3React } from '@web3-react/core'
 import { useConnectionReady } from 'connection/eagerlyConnect'
+import { useFotAdjustmentsEnabled } from 'featureFlags/flags/fotAdjustments'
 import useAutoSlippageTolerance from 'hooks/useAutoSlippageTolerance'
 import { useDebouncedTrade } from 'hooks/useDebouncedTrade'
 import { useSwapTaxes } from 'hooks/useSwapTaxes'
@@ -77,7 +78,7 @@ const BAD_RECIPIENT_ADDRESSES: { [address: string]: true } = {
   '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D': true, // v2 router 02
 }
 
-type SwapInfo = {
+export type SwapInfo = {
   currencies: { [field in Field]?: Currency }
   currencyBalances: { [field in Field]?: CurrencyAmount<Currency> }
   inputTax: Percent
@@ -111,13 +112,14 @@ export function useDerivedSwapInfo(state: SwapState, chainId: ChainId | undefine
   const inputCurrency = useCurrency(inputCurrencyId, chainId)
   const outputCurrency = useCurrency(outputCurrencyId, chainId)
 
+  const fotAdjustmentsEnabled = useFotAdjustmentsEnabled()
+  const { inputTax, outputTax } = useSwapTaxes(
+    inputCurrency?.isToken && fotAdjustmentsEnabled ? inputCurrency.address : undefined,
+    outputCurrency?.isToken && fotAdjustmentsEnabled ? outputCurrency.address : undefined
+  )
+
   const recipientLookup = useENS(recipient ?? undefined)
   const to: string | null = (recipient === null ? account : recipientLookup.address) ?? null
-
-  const { inputTax, outputTax } = useSwapTaxes(
-    inputCurrency?.isToken ? inputCurrency.address : undefined,
-    outputCurrency?.isToken ? outputCurrency.address : undefined
-  )
 
   const relevantTokenBalances = useCurrencyBalances(
     account ?? undefined,
@@ -135,7 +137,9 @@ export function useDerivedSwapInfo(state: SwapState, chainId: ChainId | undefine
     parsedAmount,
     (isExactIn ? outputCurrency : inputCurrency) ?? undefined,
     undefined,
-    account
+    account,
+    inputTax,
+    outputTax
   )
 
   const { data: outputFeeFiatValue } = useUSDPrice(
@@ -218,9 +222,9 @@ export function useDerivedSwapInfo(state: SwapState, chainId: ChainId | undefine
       trade,
       autoSlippage,
       allowedSlippage,
-      outputFeeFiatValue,
       inputTax,
       outputTax,
+      outputFeeFiatValue,
     }),
     [
       allowedSlippage,
@@ -228,11 +232,11 @@ export function useDerivedSwapInfo(state: SwapState, chainId: ChainId | undefine
       currencies,
       currencyBalances,
       inputError,
+      inputTax,
       outputFeeFiatValue,
+      outputTax,
       parsedAmount,
       trade,
-      inputTax,
-      outputTax,
     ]
   )
 }

@@ -15,9 +15,10 @@ const NftExplore = lazy(() => import('nft/pages/explore'))
 const Collection = lazy(() => import('nft/pages/collection'))
 const Profile = lazy(() => import('nft/pages/profile'))
 const Asset = lazy(() => import('nft/pages/asset/Asset'))
+const AddLiquidity = lazy(() => import('pages/AddLiquidity'))
 const Explore = lazy(() => import('pages/Explore'))
-const AddLiquidityWithTokenRedirects = lazy(() => import('pages/AddLiquidity/redirects'))
-const AddLiquidityV2WithTokenRedirects = lazy(() => import('pages/AddLiquidityV2/redirects'))
+const RedirectDuplicateTokenIds = lazy(() => import('pages/AddLiquidity/redirects'))
+const RedirectDuplicateTokenIdsV2 = lazy(() => import('pages/AddLiquidityV2/redirects'))
 const RedirectExplore = lazy(() => import('pages/Explore/redirects'))
 const MigrateV2 = lazy(() => import('pages/MigrateV2'))
 const MigrateV2Pair = lazy(() => import('pages/MigrateV2/MigrateV2Pair'))
@@ -173,17 +174,23 @@ export const routes: RouteDefinition[] = [
   createRouteDefinition({
     path: '/add/v2',
     nestedPaths: [':currencyIdA', ':currencyIdA/:currencyIdB'],
-    getElement: () => <AddLiquidityV2WithTokenRedirects />,
+    getElement: () => <RedirectDuplicateTokenIdsV2 />,
   }),
   createRouteDefinition({
     path: '/add',
+    nestedPaths: [':currencyIdA', ':currencyIdA/:currencyIdB', ':currencyIdA/:currencyIdB/:feeAmount'],
+    getElement: () => <RedirectDuplicateTokenIds />,
+  }),
+
+  createRouteDefinition({
+    path: '/increase',
     nestedPaths: [
       ':currencyIdA',
       ':currencyIdA/:currencyIdB',
       ':currencyIdA/:currencyIdB/:feeAmount',
       ':currencyIdA/:currencyIdB/:feeAmount/:tokenId',
     ],
-    getElement: () => <AddLiquidityWithTokenRedirects />,
+    getElement: () => <AddLiquidity />,
   }),
   createRouteDefinition({ path: '/remove/v2/:currencyIdA/:currencyIdB', getElement: () => <RemoveLiquidity /> }),
   createRouteDefinition({ path: '/remove/:tokenId', getElement: () => <RemoveLiquidityV3 /> }),

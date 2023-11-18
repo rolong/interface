@@ -16,6 +16,7 @@ import {
   DAI_OPTIMISM,
   DAI_POLYGON,
   ETH_BSC,
+  MUT_UCHAIN,
   nativeOnChain,
   OP,
   PORTAL_ETH_CELO,
@@ -36,6 +37,7 @@ import {
   USDT_BSC,
   USDT_OPTIMISM,
   USDT_POLYGON,
+  USDT_UCHAIN,
   WBTC,
   WBTC_ARBITRUM_ONE,
   WBTC_CELO,
@@ -115,6 +117,7 @@ export const COMMON_BASES: ChainCurrencyList = {
   [ChainId.CELO_ALFAJORES]: [nativeOnChain(ChainId.CELO_ALFAJORES), CUSD_CELO_ALFAJORES, CEUR_CELO_ALFAJORES],
 
   [ChainId.BNB]: [nativeOnChain(ChainId.BNB), DAI_BSC, USDC_BSC, USDT_BSC, ETH_BSC, BTC_BSC, BUSD_BSC],
+  [ChainId.UCHAIN]: [nativeOnChain(ChainId.UCHAIN), USDT_UCHAIN, MUT_UCHAIN],
 
   [ChainId.AVALANCHE]: [
     nativeOnChain(ChainId.AVALANCHE),
@@ -138,6 +141,7 @@ export const BASES_TO_TRACK_LIQUIDITY_FOR: ChainTokenList = {
     BUSD_BSC,
     ETH_BSC,
   ],
+  [ChainId.UCHAIN]: [...WRAPPED_NATIVE_CURRENCIES_ONLY[ChainId.UCHAIN], USDT_UCHAIN, MUT_UCHAIN],
   [ChainId.AVALANCHE]: [
     ...WRAPPED_NATIVE_CURRENCIES_ONLY[ChainId.AVALANCHE],
     DAI_AVALANCHE,

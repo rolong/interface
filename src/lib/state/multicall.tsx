@@ -22,6 +22,7 @@ function getBlocksPerFetchForChainId(chainId: number | undefined): number {
       return 15
     case ChainId.AVALANCHE:
     case ChainId.BNB:
+    case ChainId.UCHAIN:
     case ChainId.CELO:
     case ChainId.CELO_ALFAJORES:
       return 5

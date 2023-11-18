@@ -207,7 +207,7 @@ const CHAIN_INFO: ChainInfoMap = {
     explorer: 'https://e.uchain.ai/',
     infoLink: 'https://info.uniswap.org/#/bnb/',
     label: 'uChain',
-    nativeCurrency: { name: 'TBT', symbol: 'TBT', decimals: 18 },
+    nativeCurrency: { name: 'BNB', symbol: 'BNB', decimals: 18 },
     defaultListUrl: PLASMA_BNB_LIST,
     color: darkTheme.chain_56,
     backgroundColor: darkTheme.chain_56_background,

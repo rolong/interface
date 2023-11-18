@@ -14,6 +14,7 @@ import {
   USDC_MAINNET,
   USDC_POLYGON,
   USDT_BSC,
+  USDT_UCHAIN,
 } from '../constants/tokens'
 
 // Stablecoin amounts used when calculating spot price for a given currency.
@@ -25,6 +26,7 @@ const STABLECOIN_AMOUNT_OUT: { [chainId: number]: CurrencyAmount<Token> } = {
   [ChainId.POLYGON]: CurrencyAmount.fromRawAmount(USDC_POLYGON, 10_000e6),
   [ChainId.CELO]: CurrencyAmount.fromRawAmount(CUSD_CELO, 10_000e18),
   [ChainId.BNB]: CurrencyAmount.fromRawAmount(USDT_BSC, 100e18),
+  [ChainId.UCHAIN]: CurrencyAmount.fromRawAmount(USDT_UCHAIN, 100e18),
   [ChainId.AVALANCHE]: CurrencyAmount.fromRawAmount(USDC_AVALANCHE, 10_000e6),
   [ChainId.BASE]: CurrencyAmount.fromRawAmount(USDC_BASE, 10_000e6),
 }

@@ -1,6 +1,7 @@
 import { skipToken } from '@reduxjs/toolkit/query/react'
 import { Currency, CurrencyAmount, Percent, TradeType } from '@uniswap/sdk-core'
 import { AVERAGE_L1_BLOCK_TIME } from 'constants/chainInfo'
+import { ZERO_PERCENT } from 'constants/misc'
 import useIsWindowVisible from 'hooks/useIsWindowVisible'
 import { useRoutingAPIArguments } from 'lib/hooks/routing/useRoutingAPIArguments'
 import ms from 'ms'
@@ -64,7 +65,9 @@ export function useRoutingAPITrade<TTradeType extends TradeType>(
   amountSpecified: CurrencyAmount<Currency> | undefined,
   otherCurrency: Currency | undefined,
   routerPreference: RouterPreference | typeof INTERNAL_ROUTER_PREFERENCE_PRICE,
-  account?: string
+  account?: string,
+  inputTax = ZERO_PERCENT,
+  outputTax = ZERO_PERCENT
 ): {
   state: TradeState
   trade?: SubmittableTrade
@@ -87,6 +90,8 @@ export function useRoutingAPITrade<TTradeType extends TradeType>(
     amount: amountSpecified,
     tradeType,
     routerPreference,
+    inputTax,
+    outputTax,
   })
   // skip all pricing and quote requests if the window is not focused
   const isWindowVisible = useIsWindowVisible()

@@ -22,8 +22,6 @@ import { render, screen } from 'test-utils/render'
 
 import { BagFooter } from './BagFooter'
 
-console.log('===> UNIVERSAL_ROUTER_ADDRESS', UNIVERSAL_ROUTER_ADDRESS)
-
 jest.mock('nft/hooks/useBagTotalEthPrice')
 jest.mock('nft/hooks/useWalletBalance')
 jest.mock('nft/hooks/useBag')

@@ -6,7 +6,6 @@ import StaticJsonRpcProvider from 'rpc/StaticJsonRpcProvider'
 import { SupportedInterfaceChain } from './chains'
 import { RPC_URLS } from './networks'
 
-console.log('ChainId', ChainId)
 const providerFactory = (chainId: SupportedInterfaceChain, i = 0) =>
   new AppStaticJsonRpcProvider(chainId, RPC_URLS[chainId][i])
 

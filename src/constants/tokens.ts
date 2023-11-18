@@ -222,6 +222,9 @@ export const BTC_BSC = new Token(ChainId.BNB, '0x7130d2A12B9BCbFAe4f2634d864A1Ee
 export const BUSD_BSC = new Token(ChainId.BNB, '0xe9e7CEA3DedcA5984780Bafc599bD69ADd087D56', 18, 'BUSD', 'BUSD')
 export const DAI_BSC = new Token(ChainId.BNB, '0x1AF3F329e8BE154074D8769D1FFa4eE058B1DBc3', 18, 'DAI', 'DAI')
 
+export const MUT_UCHAIN = new Token(ChainId.UCHAIN, '0xBb663aFc3b267b901D0d205481a4f421F0024654', 18, 'MUT', 'MUT')
+export const USDT_UCHAIN = new Token(ChainId.UCHAIN, '0x6b5E1bf0FA6543E594B6BA491F646a698e6962D4', 18, 'USDT', 'USDT')
+
 export const USDC_AVALANCHE = new Token(
   ChainId.AVALANCHE,
   '0xB97EF9Ef8734C71904D8002F8b6Bc66Dd9c48a6E',
@@ -330,6 +333,7 @@ export const WRAPPED_NATIVE_CURRENCY: { [chainId: number]: Token | undefined } =
     'Celo native asset'
   ),
   [ChainId.BNB]: new Token(ChainId.BNB, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c', 18, 'WBNB', 'Wrapped BNB'),
+  [ChainId.UCHAIN]: new Token(ChainId.UCHAIN, '0x1D7A42e67F9C5592d1927a7B47e32Ae809561fE0', 18, 'WTBT', 'Wrapped TBT'),
   [ChainId.AVALANCHE]: new Token(
     ChainId.AVALANCHE,
     '0xB31f66AA3C1e785363F0875A1B74E27b85FD66c7',
@@ -378,6 +382,10 @@ class PolygonNativeCurrency extends NativeCurrency {
 
 export function isBsc(chainId: number): chainId is ChainId.BNB {
   return chainId === ChainId.BNB
+}
+
+export function isUchain(chainId: number): chainId is ChainId.UCHAIN {
+  return chainId === ChainId.UCHAIN
 }
 
 class BscNativeCurrency extends NativeCurrency {

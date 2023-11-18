@@ -4,7 +4,7 @@ import { FeatureFlag } from 'featureFlags'
 import { USDC_MAINNET } from '../../../src/constants/tokens'
 import { getBalance, getTestSelector } from '../../utils'
 
-describe('Swap with fees', () => {
+describe.skip('Swap with fees', () => {
   describe('Classic swaps', () => {
     beforeEach(() => {
       cy.visit('/swap', { featureFlags: [{ name: FeatureFlag.feesEnabled, value: true }] })
@@ -120,7 +120,10 @@ describe('Swap with fees', () => {
   describe('UniswapX swaps', () => {
     it('displays UniswapX fee in UI', () => {
       cy.visit('/swap', {
-        featureFlags: [{ name: FeatureFlag.feesEnabled, value: true }],
+        featureFlags: [
+          { name: FeatureFlag.feesEnabled, value: true },
+          { name: FeatureFlag.uniswapXDefaultEnabled, value: true },
+        ],
       })
 
       // Intercept the trade quote

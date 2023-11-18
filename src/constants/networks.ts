@@ -12,6 +12,7 @@ const QUICKNODE_BNB_RPC_URL = process.env.REACT_APP_BNB_RPC_URL
 if (typeof QUICKNODE_BNB_RPC_URL === 'undefined') {
   throw new Error(`REACT_APP_BNB_RPC_URL must be a defined environment variable`)
 }
+
 const QUICKNODE_UCHAIN_RPC_URL = process.env.REACT_APP_UCHAIN_RPC_URL
 if (typeof QUICKNODE_UCHAIN_RPC_URL === 'undefined') {
   throw new Error(`REACT_APP_UCHAIN_RPC_URL must be a defined environment variable`)
@@ -162,7 +163,7 @@ export const RPC_URLS = {
   [ChainId.CELO]: FALLBACK_URLS[ChainId.CELO],
   [ChainId.CELO_ALFAJORES]: FALLBACK_URLS[ChainId.CELO_ALFAJORES],
   [ChainId.BNB]: [QUICKNODE_BNB_RPC_URL, ...FALLBACK_URLS[ChainId.BNB]],
-  [ChainId.UCHAIN]: [QUICKNODE_BNB_RPC_URL, ...FALLBACK_URLS[ChainId.UCHAIN]],
+  [ChainId.UCHAIN]: [QUICKNODE_UCHAIN_RPC_URL, ...FALLBACK_URLS[ChainId.UCHAIN]],
   [ChainId.AVALANCHE]: [`https://avalanche-mainnet.infura.io/v3/${INFURA_KEY}`, ...FALLBACK_URLS[ChainId.AVALANCHE]],
   [ChainId.BASE]: [`https://base-mainnet.infura.io/v3/${INFURA_KEY}`, ...FALLBACK_URLS[ChainId.BASE]],
 }

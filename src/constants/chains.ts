@@ -125,9 +125,8 @@ export function getChainPriority(chainId: ChainId): number {
       return 3
     case ChainId.BASE:
       return 4
-    case ChainId.UCHAIN:
-      return 5
     case ChainId.BNB:
+    case ChainId.UCHAIN:
       return 5
     case ChainId.AVALANCHE:
       return 6

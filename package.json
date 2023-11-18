@@ -4,9 +4,6 @@
   "description": "Uniswap Interface",
   "license": "GPL-3.0-or-later",
   "scripts": {
-    "postinstall1": "npm link ./forks/sdk-core  --legacy-peer-deps",
-    "postinstall2": "npm link ./forks/v3-sdk  --legacy-peer-deps",
-    "postinstall3": "npm link ./forks/universal-router-sdk  --legacy-peer-deps",
     "ajv": "node scripts/compile-ajv-validators.js",
     "contracts:compile:abi": "typechain --target ethers-v5 --out-dir src/abis/types \"./src/abis/**/*.json\"",
     "contracts:compile:v3": "typechain --target ethers-v5 --out-dir src/types/v3 \"./node_modules/@uniswap/**/artifacts/contracts/**/*[!dbg].json\"",
@@ -205,7 +202,7 @@
     "@uniswap/merkle-distributor": "^1.0.1",
     "@uniswap/permit2-sdk": "^1.2.0",
     "@uniswap/redux-multicall": "^1.1.8",
-    "@uniswap/router-sdk": "^1.7.1",
+    "@uniswap/router-sdk": "^1.6.0",
     "@uniswap/sdk-core": "4.0.7",
     "@uniswap/smart-order-router": "^3.15.0",
     "@uniswap/token-lists": "^1.0.0-beta.33",
@@ -307,6 +304,7 @@
     "zustand": "^4.3.6"
   },
   "engines": {
+    "npm": "please-use-yarn",
     "node": "18.x",
     "yarn": ">=1.22"
   }

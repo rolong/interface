@@ -102,6 +102,15 @@ export default function RadialGradientByChainUpdater(): null {
         backgroundRadialGradientElement.style.background = darkMode ? bscDarkGradient : bscLightGradient
         break
       }
+      case ChainId.UCHAIN: {
+        setBackground(backgroundResetStyles)
+        const bscLightGradient =
+          'radial-gradient(100% 100% at 50% 0%, rgba(242 , 186, 8, 0) 0%, rgba(238, 182, 6, 0) 50%, rgba(140, 185, 11, 0) 100%), #FFFFFF'
+        const bscDarkGradient =
+          'radial-gradient(100% 100% at 50% 0%, rgba(169, 132, 17, 0) 0%, rgba(128, 100, 14, 0) 50%, rgba(140, 185, 11, 0) 100%), #0D0E0E'
+        backgroundRadialGradientElement.style.background = darkMode ? bscDarkGradient : bscLightGradient
+        break
+      }
       case ChainId.AVALANCHE: {
         setBackground(backgroundResetStyles)
         const avaxLightGradient =

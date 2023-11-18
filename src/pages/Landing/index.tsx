@@ -8,6 +8,8 @@ import { MAIN_CARDS, MORE_CARDS } from 'components/About/constants'
 import ProtocolBanner from 'components/About/ProtocolBanner'
 import { useAccountDrawer } from 'components/AccountDrawer'
 import { BaseButton } from 'components/Button'
+import { AppleLogo } from 'components/Logo/AppleLogo'
+import { useAndroidGALaunchFlagEnabled } from 'featureFlags/flags/androidGALaunch'
 import { useDisableNFTRoutes } from 'hooks/useDisableNFTRoutes'
 import Swap from 'pages/Swap'
 import { parse } from 'qs'
@@ -320,6 +322,8 @@ export default function Landing() {
     [shouldDisableNFTRoutes]
   )
 
+  const isAndroidGALaunched = useAndroidGALaunchFlagEnabled()
+
   const [accountDrawerOpen] = useAccountDrawer()
   const navigate = useNavigate()
   useEffect(() => {
@@ -396,12 +400,20 @@ export default function Landing() {
           <DownloadWalletLink
             {...getDownloadAppLinkProps({
               element: InterfaceElementName.UNISWAP_WALLET_LANDING_PAGE_DOWNLOAD_BUTTON,
+              isAndroidGALaunched,
             })}
           >
-            <>
-              <UniswapAppLogo width="20" height="20" />
-              Download the Uniswap app
-            </>
+            {isAndroidGALaunched ? (
+              <>
+                <UniswapAppLogo width="20" height="20" />
+                Download the Uniswap app
+              </>
+            ) : (
+              <>
+                <AppleLogo width="20" height="20" />
+                Download the Uniswap app for iOS
+              </>
+            )}
           </DownloadWalletLink>
         </ContentContainer>
         <AboutContentContainer isDarkMode={isDarkMode}>

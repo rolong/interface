@@ -175,9 +175,7 @@ module.exports = {
       )
 
       // Configure webpack resolution. webpackConfig.cache is unused with swc-loader, but the resolver can still cache:
-      webpackConfig.resolve = Object.assign(webpackConfig.resolve, {
-        unsafeCache: true,
-      })
+      webpackConfig.resolve = Object.assign(webpackConfig.resolve, { unsafeCache: true })
 
       return webpackConfig
     },

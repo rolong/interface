@@ -14,6 +14,7 @@ export const MICROSITE_LINK = 'https://wallet.uniswap.org/'
 
 type OpenDownloadAppOptions = {
   element: InterfaceElementName
+  isAndroidGALaunched: boolean
 }
 
 /**
@@ -27,10 +28,10 @@ type OpenDownloadAppOptions = {
  *
  * I've added a helper `getDownloadAppLinkProps` that unifies this behavior into one thing.
  */
-export function openDownloadApp({ element }: OpenDownloadAppOptions) {
+export function openDownloadApp({ element, isAndroidGALaunched }: OpenDownloadAppOptions) {
   if (isIOS) {
     openDownloadStore({ element, appPlatform: AppDownloadPlatform.IOS, linkTarget: 'uniswap_wallet_appstore' })
-  } else if (isAndroid) {
+  } else if (isAndroidGALaunched && isAndroid) {
     openDownloadStore({ element, appPlatform: AppDownloadPlatform.ANDROID, linkTarget: 'uniswap_wallet_playstore' })
   } else {
     sendAnalyticsEvent(InterfaceEventName.UNISWAP_WALLET_MICROSITE_OPENED, { element })
@@ -38,12 +39,12 @@ export function openDownloadApp({ element }: OpenDownloadAppOptions) {
   }
 }
 
-export const getDownloadAppLinkProps = ({ element }: OpenDownloadAppOptions) => {
+export const getDownloadAppLinkProps = ({ element, isAndroidGALaunched }: OpenDownloadAppOptions) => {
   return {
     href: APP_DOWNLOAD_LINKS[element],
     onClick(e: { preventDefault: () => void }) {
       e.preventDefault()
-      openDownloadApp({ element })
+      openDownloadApp({ element, isAndroidGALaunched })
     },
   }
 }

@@ -6,6 +6,7 @@ export function useIsPoolsPage() {
     pathname.startsWith('/pools') ||
     pathname.startsWith('/pool') ||
     pathname.startsWith('/add') ||
-    pathname.startsWith('/remove')
+    pathname.startsWith('/remove') ||
+    pathname.startsWith('/increase')
   )
 }

@@ -1,5 +1,6 @@
 import { Trans } from '@lingui/macro'
 import { InterfaceElementName } from '@uniswap/analytics-events'
+import { useAndroidGALaunchFlagEnabled } from 'featureFlags/flags/androidGALaunch'
 import { useScreenSize } from 'hooks/useScreenSize'
 import { useLocation } from 'react-router-dom'
 import { useHideAndroidAnnouncementBanner } from 'state/user/hooks'
@@ -30,12 +31,14 @@ export default function AndroidAnnouncementBanner() {
   const shouldDisplay = Boolean(!hideAndroidAnnouncementBanner && !isLandingScreen)
   const isDarkMode = useIsDarkMode()
 
+  const isAndroidGALaunched = useAndroidGALaunchFlagEnabled()
   const onClick = () =>
     openDownloadApp({
       element: InterfaceElementName.UNISWAP_WALLET_BANNER_DOWNLOAD_BUTTON,
+      isAndroidGALaunched,
     })
 
-  if (isMobileSafari) return null
+  if (!isAndroidGALaunched || isMobileSafari) return null
 
   return (
     <PopupContainer show={shouldDisplay}>
